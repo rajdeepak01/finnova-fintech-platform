@@ -1,24 +1,85 @@
-# Compiled class file
+# ==============================
+# Node.js / Angular
+# ==============================
+node_modules/
+**/node_modules/
+
+dist/
+**/dist/
+.angular/
+**/.angular/
+coverage/
+**/coverage/
+
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ==============================
+# Java / Maven / Spring Boot
+# ==============================
+**/target/
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
-*.nar
 *.ear
-*.zip
-*.tar.gz
-*.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# ==============================
+# Environment variables / Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.production.example
+
+# ==============================
+# Certificates / Private keys
+# ==============================
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
+# ==============================
+# Logs
+# ==============================
+*.log
+logs/
+
+# ==============================
+# IDE / Editors
+# ==============================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# ==============================
+# Operating System
+# ==============================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==============================
+# Temporary files
+# ==============================
+*.tmp
+*.temp
+*.swp
+*.bak
+
+# ==============================
+# Test reports
+# ==============================
+**/surefire-reports/
+**/failsafe-reports/
