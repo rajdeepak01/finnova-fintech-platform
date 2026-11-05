@@ -13,9 +13,8 @@ export class Api {
   constructor(private http: HttpClient) {}
 
   getMessage(): Observable<string> {
-    return this.http.get(
-      this.apiUrl,
-      { responseType: 'text' }
-    );
+    return this.http.get(this.apiUrl, {
+      responseType: 'text'
+    });
   }
 }
