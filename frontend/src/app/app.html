@@ -1,5 +1,108 @@
-<h1>FINNOVA</h1>
+<header class="topbar">
+  <h1>FINNOVA</h1>
+  <span class="tag">Banking prototype</span>
+</header>
 
-<h2>Spring Boot Backend Response</h2>
+<main class="layout">
+  @if (error()) {
+    <div class="banner error">{{ error() }}</div>
+  }
+  @if (notice()) {
+    <div class="banner ok">{{ notice() }}</div>
+  }
 
-<p>Message: {{ message }}</p>
+  @if (loading()) {
+    <p class="muted center">Connecting to server… (first load can take ~30s on the free tier)</p>
+  } @else {
+    <div class="grid">
+
+      <!-- LEFT: accounts -->
+      <section class="card">
+        <h2>Accounts</h2>
+        @for (a of accounts(); track a.id) {
+          <button type="button" class="account" [class.active]="a.id === selectedId()" (click)="select(a.id)">
+            <span class="name">{{ a.ownerName }}</span>
+            <span class="num">{{ a.accountNumber }}</span>
+            <span class="bal">{{ a.balance | currency: 'INR' }}</span>
+          </button>
+        } @empty {
+          <p class="muted">No accounts yet.</p>
+        }
+
+        <h3>Open new account</h3>
+        <form (ngSubmit)="createAccount()">
+          <input name="owner" placeholder="Account holder name" [ngModel]="newOwner()" (ngModelChange)="newOwner.set($event)" />
+          <input name="initial" type="number" min="0" step="0.01" placeholder="Opening deposit"
+                 [ngModel]="newDeposit()" (ngModelChange)="newDeposit.set($event)" />
+          <button type="submit">Create account</button>
+        </form>
+      </section>
+
+      <!-- RIGHT: selected account -->
+      <section class="card">
+        @if (selected(); as acc) {
+          <div class="summary">
+            <div>
+              <h2>{{ acc.ownerName }}</h2>
+              <p class="muted">{{ acc.accountNumber }}</p>
+            </div>
+            <div class="big">{{ acc.balance | currency: 'INR' }}</div>
+          </div>
+
+          <div class="actions">
+            <form (ngSubmit)="deposit()" class="inline">
+              <h3>Deposit / Withdraw</h3>
+              <input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount"
+                     [ngModel]="amount()" (ngModelChange)="amount.set($event)" />
+              <div class="row">
+                <button type="submit">Deposit</button>
+                <button type="button" class="secondary" (click)="withdraw()">Withdraw</button>
+              </div>
+            </form>
+
+            <form (ngSubmit)="transfer()" class="inline">
+              <h3>Transfer</h3>
+              <select name="to" [ngModel]="transferTo()" (ngModelChange)="transferTo.set($event)">
+                <option [ngValue]="null">Select destination…</option>
+                @for (o of otherAccounts(); track o.id) {
+                  <option [ngValue]="o.id">{{ o.ownerName }} ({{ o.accountNumber }})</option>
+                }
+              </select>
+              <input name="tamount" type="number" min="0.01" step="0.01" placeholder="Amount"
+                     [ngModel]="transferAmount()" (ngModelChange)="transferAmount.set($event)" />
+              <button type="submit">Send money</button>
+            </form>
+          </div>
+
+          <h3>Transaction history</h3>
+          @if (entries().length === 0) {
+            <p class="muted">No transactions yet.</p>
+          } @else {
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Date</th><th>Type</th><th>Details</th><th class="r">Amount</th><th class="r">Balance</th></tr>
+                </thead>
+                <tbody>
+                  @for (e of entries(); track e.id) {
+                    <tr>
+                      <td>{{ e.createdAt | date: 'medium' }}</td>
+                      <td>{{ typeLabel(e.type) }}</td>
+                      <td class="muted">{{ e.counterpartAccountNumber ?? e.description ?? '—' }}</td>
+                      <td class="r" [class.credit]="isCredit(e.type)" [class.debit]="!isCredit(e.type)">
+                        {{ isCredit(e.type) ? '+' : '−' }}{{ e.amount | currency: 'INR' }}
+                      </td>
+                      <td class="r">{{ e.balanceAfter | currency: 'INR' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        } @else {
+          <p class="muted">Select or create an account to begin.</p>
+        }
+      </section>
+    </div>
+  }
+</main>
